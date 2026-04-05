@@ -1,0 +1,36 @@
+# ============================================================================
+# Dev Environment Configuration
+# Copy this file to dev.tfvars and fill in your values.
+# ============================================================================
+
+subscription_id    = "00000000-0000-0000-0000-000000000000"  # Your Azure Subscription ID
+location           = "centralindia"
+environment        = "dev"
+project_name       = "waf-aks"
+
+# Azure AD group for cluster-admin access (az ad group show --group "AKS Admins" --query id -o tsv)
+aks_admin_group_id = "00000000-0000-0000-0000-000000000000"
+
+# Networking
+hub_vnet_address_space   = "10.0.0.0/16"
+spoke_vnet_address_space = "10.1.0.0/16"
+
+# AKS — smaller sizing for dev
+kubernetes_version     = "1.29"
+system_node_count      = 1       # Single node is fine for dev
+system_node_vm_size    = "Standard_D2s_v5"  # Smaller SKU for dev
+general_node_min_count = 1
+general_node_max_count = 3
+general_node_vm_size   = "Standard_D4s_v5"
+enable_spot_pool       = false   # Don't need spot in dev
+
+# Features — cost-conscious for dev
+enable_bastion  = false  # Use az aks command invoke instead
+enable_defender = false  # Save cost in dev
+enable_grafana  = false
+
+tags = {
+  Owner       = "amartya"
+  CostCenter  = "engineering"
+  Environment = "dev"
+}

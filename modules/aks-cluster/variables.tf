@@ -1,0 +1,16 @@
+variable "resource_group_name" { type = string }
+variable "location" { type = string }
+variable "name_prefix" { type = string }
+variable "kubernetes_version" { type = string }
+variable "vnet_subnet_id" { type = string }
+variable "aks_admin_group_id" { type = string }
+variable "private_dns_zone_id" { type = string }
+variable "log_analytics_workspace_id" { type = string }
+variable "acr_id" { type = string }
+variable "system_node_count" { type = number }
+variable "system_node_vm_size" { type = string }
+variable "general_node_min_count" { type = number }
+variable "general_node_max_count" { type = number }
+variable "general_node_vm_size" { type = string }
+variable "enable_spot_pool" { type = bool }
+variable "tags" { type = map(string) }

@@ -1,0 +1,32 @@
+# ============================================================================
+# Production Environment
+# Full Well-Architected configuration. All safety features enabled.
+# ============================================================================
+
+subscription_id    = "00000000-0000-0000-0000-000000000000"
+location           = "centralindia"
+environment        = "prod"
+project_name       = "waf-aks"
+aks_admin_group_id = "00000000-0000-0000-0000-000000000000"
+
+hub_vnet_address_space   = "10.4.0.0/16"
+spoke_vnet_address_space = "10.5.0.0/16"
+
+kubernetes_version     = "1.29"
+system_node_count      = 3          # One per AZ — always
+system_node_vm_size    = "Standard_D4s_v5"
+general_node_min_count = 3
+general_node_max_count = 15
+general_node_vm_size   = "Standard_D8s_v5"
+enable_spot_pool       = true
+
+enable_bastion  = true
+enable_defender = true   # Always in production
+enable_grafana  = true
+
+tags = {
+  Owner       = "amartya"
+  CostCenter  = "engineering"
+  Environment = "prod"
+  Compliance  = "internal"
+}

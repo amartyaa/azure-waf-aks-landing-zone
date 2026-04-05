@@ -1,0 +1,31 @@
+# ============================================================================
+# Staging Environment
+# Mirrors production sizing at lower scale for realistic testing.
+# ============================================================================
+
+subscription_id    = "00000000-0000-0000-0000-000000000000"
+location           = "centralindia"
+environment        = "staging"
+project_name       = "waf-aks"
+aks_admin_group_id = "00000000-0000-0000-0000-000000000000"
+
+hub_vnet_address_space   = "10.2.0.0/16"  # Different CIDR from dev/prod
+spoke_vnet_address_space = "10.3.0.0/16"
+
+kubernetes_version     = "1.29"
+system_node_count      = 2
+system_node_vm_size    = "Standard_D4s_v5"
+general_node_min_count = 2
+general_node_max_count = 6
+general_node_vm_size   = "Standard_D8s_v5"
+enable_spot_pool       = true
+
+enable_bastion  = true
+enable_defender = true
+enable_grafana  = false
+
+tags = {
+  Owner       = "amartya"
+  CostCenter  = "engineering"
+  Environment = "staging"
+}
