@@ -29,7 +29,7 @@ resource "azurerm_subnet" "pe" {
   address_prefixes     = [cidrsubnet(var.vnet_address_space, 8, 4)] # /24
 
   # Required for Private Endpoints
-  private_endpoint_network_policies_enabled = true
+  private_endpoint_network_policies = "Enabled"
 }
 
 # ---- NSGs ----
@@ -117,15 +117,17 @@ resource "azurerm_route_table" "aks_to_firewall" {
   name                          = "rt-${var.name_prefix}-aks"
   location                      = var.location
   resource_group_name           = var.resource_group_name
-  disable_bgp_route_propagation = true
+  bgp_route_propagation_enabled = false
   tags                          = var.tags
+}
 
-  route {
-    name                   = "default-to-firewall"
-    address_prefix         = "0.0.0.0/0"
-    next_hop_type          = "VirtualAppliance"
-    next_hop_in_ip_address = var.firewall_private_ip
-  }
+resource "azurerm_route" "default_to_firewall" {
+  name                   = "default-to-firewall"
+  resource_group_name    = var.resource_group_name
+  route_table_name       = azurerm_route_table.aks_to_firewall.name
+  address_prefix         = "0.0.0.0/0"
+  next_hop_type          = "VirtualAppliance"
+  next_hop_in_ip_address = var.firewall_private_ip
 }
 
 resource "azurerm_subnet_route_table_association" "aks" {

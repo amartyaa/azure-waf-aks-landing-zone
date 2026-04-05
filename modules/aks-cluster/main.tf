@@ -63,8 +63,8 @@ resource "azurerm_kubernetes_cluster" "aks" {
   }
 
   # SECURITY: Azure AD RBAC — kubectl auth flows through Azure AD.
+  # In v4, 'managed' is removed (always managed). Only azure_rbac + admin group remain.
   azure_active_directory_role_based_access_control {
-    managed                = true
     azure_rbac_enabled     = true
     admin_group_object_ids = [var.aks_admin_group_id]
   }
@@ -81,11 +81,14 @@ resource "azurerm_kubernetes_cluster" "aks" {
     os_disk_size_gb      = 128
     max_pods             = 110
     type                 = "VirtualMachineScaleSets"
-    only_critical_system_pods_allowed = true
 
     node_labels = {
       "pool" = "system"
     }
+
+    # CriticalAddonsOnly taint keeps user workloads off system nodes.
+    # Only pods with a matching toleration (CoreDNS, kube-proxy, etc.) will schedule here.
+    temporary_name_for_rotation = "systemtmp"
 
     upgrade_settings {
       max_surge = "33%"
@@ -104,8 +107,8 @@ resource "azurerm_kubernetes_cluster" "aks" {
   # OPS EXCELLENCE: Azure Policy add-on for OPA Gatekeeper
   azure_policy_enabled = true
 
-  # RELIABILITY: Auto-upgrade channel
-  automatic_channel_upgrade = "patch"
+  # RELIABILITY: Auto-upgrade channel (renamed in v4)
+  automatic_upgrade_channel = "patch"
 
   # RELIABILITY: Maintenance window — upgrades only during off-peak
   maintenance_window {
@@ -141,8 +144,8 @@ resource "azurerm_kubernetes_cluster_node_pool" "general" {
   tags                  = var.tags
 
   # COST + RELIABILITY: autoscaler adjusts nodes based on demand
-  enable_auto_scaling = true
-  min_count           = var.general_node_min_count
+  auto_scaling_enabled = true
+  min_count            = var.general_node_min_count
   max_count           = var.general_node_max_count
 
   node_labels = {
@@ -176,7 +179,7 @@ resource "azurerm_kubernetes_cluster_node_pool" "spot" {
   vnet_subnet_id        = var.vnet_subnet_id
   tags                  = var.tags
 
-  enable_auto_scaling = true
+  auto_scaling_enabled = true
   min_count           = 0
   max_count           = 5
 

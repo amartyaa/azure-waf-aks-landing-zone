@@ -8,7 +8,23 @@ provider "azurerm" {
       prevent_deletion_if_contains_resources = var.environment == "prod" ? true : false
     }
   }
-  subscription_id = var.subscription_id
+
+  subscription_id                 = var.subscription_id
+  resource_provider_registrations = "core"
+
+  # Register only the RPs we actually need — follows Azure best practice.
+  resource_providers_to_register = [
+    "Microsoft.ContainerService",
+    "Microsoft.ContainerRegistry",
+    "Microsoft.KeyVault",
+    "Microsoft.Network",
+    "Microsoft.OperationalInsights",
+    "Microsoft.OperationsManagement",
+    "Microsoft.ManagedIdentity",
+    "Microsoft.PolicyInsights",
+    "Microsoft.Security",
+    "Microsoft.Dashboard",
+  ]
 }
 
 provider "azuread" {}

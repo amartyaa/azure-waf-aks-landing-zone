@@ -115,13 +115,14 @@ resource "azurerm_monitor_scheduled_query_rules_alert_v2" "pod_restart_loop" {
 
 # ---- Managed Grafana (Optional) ----
 resource "azurerm_dashboard_grafana" "main" {
-  count               = var.enable_grafana ? 1 : 0
-  name                = "grafana-${var.name_prefix}"
-  location            = var.location
-  resource_group_name = var.resource_group_name
-  sku                 = "Standard"
+  count                   = var.enable_grafana ? 1 : 0
+  name                    = "grafana-${var.name_prefix}"
+  location                = var.location
+  resource_group_name     = var.resource_group_name
+  sku                     = "Standard"
+  grafana_major_version   = "11" # v4.67+ requires 11 or 12
   zone_redundancy_enabled = false
-  tags                = var.tags
+  tags                    = var.tags
 
   azure_monitor_workspace_integrations {
     resource_id = azurerm_log_analytics_workspace.main.id
